@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const axios = require('axios');
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
@@ -18,27 +18,20 @@ exports.handler = async (event) => {
     }
 
     try {
-        const response = await fetch(
+        const response = await axios.post(
             'https://api.beehiiv.com/v2/publications/pub_1eae5826-7416-4d6c-acd3-a58b2964b78b/subscriptions',
+            { email },
             {
-                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer 7n1r7124qgAfpdQL9TGHUIyio1sWmzupPK5hLYK0SHfpI3D6cMn5vncziO5GJroy`,
                 },
-                body: JSON.stringify({ email }),
             }
         );
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || 'Subscription failed');
-        }
-
         return {
             statusCode: 200,
-            body: JSON.stringify({ message: 'Subscription successful', data }),
+            body: JSON.stringify({ message: 'Subscription successful', data: response.data }),
         };
     } catch (error) {
         return {
